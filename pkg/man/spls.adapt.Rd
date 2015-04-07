@@ -115,7 +115,7 @@ spls.adapt(Xtrain, Ytrain, lambda.l1, ncomp, weight.mat=NULL, Xtest=NULL, adapt=
 \references{
  
      G. Durif, F. Picard, S. Lambert-Lacroix (2015). Adaptive sparse PLS for logistic regression, 
-     (in prep), available on (\url{http://arxiv.org/}).
+     (in prep), available on (\url{http://arxiv.org/abs/1502.05933}).
      
      Chun, H., & Keles, S. (2010). Sparse partial least squares regression for simultaneous 
      dimension reduction and variable selection.  Journal of the Royal Statistical Society.
@@ -129,6 +129,9 @@ spls.adapt(Xtrain, Ytrain, lambda.l1, ncomp, weight.mat=NULL, Xtest=NULL, adapt=
 
 \author{
 	Ghislain Durif (\url{http://lbbe.univ-lyon1.fr/-Durif-Ghislain-.html}). 
+     
+     Adapted in part from spls code by H. Chun, D. Chung and S.Keles 
+     (\url{http://cran.r-project.org/web/packages/spls/index.html}).
 
 }
 \seealso{\code{\link{spls.adapt.tune}}.}
@@ -138,39 +141,45 @@ spls.adapt(Xtrain, Ytrain, lambda.l1, ncomp, weight.mat=NULL, Xtest=NULL, adapt=
 library(plsgenomics)
 
 ### generating data
-n = 100
-p = 1000
-sample1 = sample.cont(n=100, p=1000, kstar=20, lstar=2, beta.min=0.25, beta.max=0.75, 
+n <- 100
+p <- 1000
+sample1 <- sample.cont(n=n, p=p, kstar=20, lstar=2, beta.min=0.25, beta.max=0.75, 
                          mean.H=0.2, sigma.H=10, sigma.F=5, sigma.E=5)
 
-X = sample1$X
-Y = sample1$Y
+X <- sample1$X
+Y <- sample1$Y
 
 ### splitting between learning and testing set
-index.train = sort(sample(1:n, size=round(0.7*n)))
-index.test = (1:n)[-index.train]
+index.train <- sort(sample(1:n, size=round(0.7*n)))
+index.test <- (1:n)[-index.train]
 
-Xtrain = X[index.train,]
-Ytrain = Y[index.train,]
+Xtrain <- X[index.train,]
+Ytrain <- Y[index.train,]
 
-Xtest = X[index.test,]
-Ytest = Y[index.test,]
+Xtest <- X[index.test,]
+Ytest <- Y[index.test,]
 
 ### fitting the model, and predicting new observations
-model1 = spls.adapt(Xtrain=Xtrain, Ytrain=Ytrain, lambda.l1=0.5, ncomp=2, weight.mat=NULL, 
+model1 <- spls.adapt(Xtrain=Xtrain, Ytrain=Ytrain, lambda.l1=0.5, ncomp=2, weight.mat=NULL, 
                          Xtest=Xtest, adapt=TRUE, center.X=TRUE, center.Y=TRUE, scale.X=TRUE, 
                          scale.Y=TRUE, weighted.center=FALSE)
 str(model1)
 
-### plotting some results
+### plotting the estimation versus real values for the non centered response
 plot(model1$Ytrain, model1$hatY.nc, xlab="real Ytrain", ylab="Ytrain estimates")
 points(-1000:1000,-1000:1000, type="l")
+
+### plotting residuals versus centered response values
 plot(model1$sYtrain, model1$residuals, xlab="sYtrain", ylab="residuals")
+
+### plotting the predictor coefficients
 plot(model1$betahat.nc, xlab="variable index", ylab="coeff")
 
-### mean squares error of prediction
-sYtest = as.matrix(scale(Ytest, center=model1$meanYtrain, scale=model1$sigmaYtrain))
+### mean squares error of prediction on test sample
+sYtest <- as.matrix(scale(Ytest, center=model1$meanYtrain, scale=model1$sigmaYtrain))
 sum((model1$hatYtest - sYtest)^2) / length(index.test)
+
+### plotting predicted values versus non centered real response values on the test set
 plot(model1$hatYtest, sYtest, xlab="real Ytest", ylab="predicted values")
 points(-1000:1000,-1000:1000, type="l")
 

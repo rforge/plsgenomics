@@ -56,7 +56,8 @@ Data Analysis, vol 51, n 3, 2091-2113.
 }
 
 \author{
-  Sophie Lambert-Lacroix (\url{http://www-lmc.imag.fr/lmc-sms/Sophie.Lambert}) 
+  Sophie Lambert-Lacroix 
+  (\url{http://www.upmf-grenoble.fr/lambert-lacroix-sophie-167268.htm}) 
    and 
   Julie Peyre (\url{http://www-lmc.imag.fr/lmc-sms/Julie.Peyre/}).
 
@@ -70,17 +71,18 @@ library(plsgenomics)
 # load SRBCT data
 data(SRBCT)
 IndexLearn <- c(sample(which(SRBCT$Y==1),10),sample(which(SRBCT$Y==2),4),
-			sample(which(SRBCT$Y==3),7),sample(which(SRBCT$Y==4),9))
+                sample(which(SRBCT$Y==3),7),sample(which(SRBCT$Y==4),9))
 
-# Determine optimum h and lambda 
-hl <- mgsim.cv(Ytrain=SRBCT$Y[IndexLearn],Xtrain=SRBCT$X[IndexLearn,],
-			LambdaRange=c(0.1),hRange=c(7,20))
+### Determine optimum h and lambda
+# /!\ take 30 secondes to run
+#hl <- mgsim.cv(Ytrain=SRBCT$Y[IndexLearn],Xtrain=SRBCT$X[IndexLearn,],
+#                            LambdaRange=c(0.1),hRange=c(7,20))
 
-# perform prediction by MGSIM
-res <- mgsim(Ytrain=SRBCT$Y[IndexLearn],Xtrain=SRBCT$X[IndexLearn,],Lambda=hl$Lambda,
-			h=hl$h,Xtest=SRBCT$X[-IndexLearn,])
-res$Cvg
-sum(res$Ytest!=SRBCT$Y[-IndexLearn])
+### perform prediction by MGSIM
+#res <- mgsim(Ytrain=SRBCT$Y[IndexLearn],Xtrain=SRBCT$X[IndexLearn,],Lambda=hl$Lambda,
+#             h=hl$h,Xtest=SRBCT$X[-IndexLearn,])
+#res$Cvg
+#sum(res$Ytest!=SRBCT$Y[-IndexLearn])
 
 }
 

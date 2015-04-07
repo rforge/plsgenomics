@@ -86,12 +86,15 @@ rirls.spls(Xtrain, Ytrain, lambda.ridge, lambda.l1, ncomp,
 \references{
  
 	G. Durif, F. Picard, S. Lambert-Lacroix (2015). Adaptive sparse PLS for logistic regression, 
-	(in prep), available on (\url{http://arxiv.org/}). 
+	(in prep), available on (\url{http://arxiv.org/abs/1502.05933}). 
 
 }
 
 \author{
 	Ghislain Durif (\url{http://lbbe.univ-lyon1.fr/-Durif-Ghislain-.html}). 
+     
+     Adapted in part from rpls code by S. Lambert-Lacroix 
+     (function available in this package).
 
 }
 \seealso{\code{\link{rirls.spls.tune}}.}
@@ -101,26 +104,26 @@ rirls.spls(Xtrain, Ytrain, lambda.ridge, lambda.l1, ncomp,
 library(plsgenomics)
 
 ### generating data
-n = 100
-p = 1000
-sample1 = sample.bin(n=100, p=1000, kstar=20, lstar=2, beta.min=0.25, beta.max=0.75, 
+n <- 50
+p <- 100
+sample1 <- sample.bin(n=n, p=p, kstar=20, lstar=2, beta.min=0.25, beta.max=0.75, 
 					mean.H=0.2, sigma.H=10, sigma.F=5)
 
-X = sample1$X
-Y = sample1$Y
+X <- sample1$X
+Y <- sample1$Y
 
 ### splitting between learning and testing set
-index.train = sort(sample(1:n, size=round(0.7*n)))
-index.test = (1:n)[-index.train]
+index.train <- sort(sample(1:n, size=round(0.7*n)))
+index.test <- (1:n)[-index.train]
 
-Xtrain = X[index.train,]
-Ytrain = Y[index.train,]
+Xtrain <- X[index.train,]
+Ytrain <- Y[index.train,]
 
-Xtest = X[index.test,]
-Ytest = Y[index.test,]
+Xtest <- X[index.test,]
+Ytest <- Y[index.test,]
 
 ### fitting the model, and predicting new observations
-model1 = rirls.spls(Xtrain=Xtrain, Ytrain=Ytrain, lambda.ridge=2, lambda.l1=0.5, ncomp=2, 
+model1 <- rirls.spls(Xtrain=Xtrain, Ytrain=Ytrain, lambda.ridge=2, lambda.l1=0.5, ncomp=2, 
 					Xtest=Xtest, adapt=TRUE, maxIter=100, svd.decompose=TRUE)
 str(model1)
 
